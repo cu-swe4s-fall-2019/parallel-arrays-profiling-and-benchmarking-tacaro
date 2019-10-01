@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 matplotlib.use('Agg')
 
 
-def boxplot(L, out_file_name):
+def boxplot(L, out_file_name, groups, gene_name, group_col_name): # need gene_name and SMTS/SMTSD args
     data = []
+
     for l in L:
         try:
             data.append(l)
@@ -21,10 +22,20 @@ def boxplot(L, out_file_name):
     fig.canvas.set_window_title('A Boxplot Example')
     plt.subplots_adjust(left=0.075, right=0.95, top=0.9, bottom=0.25)
 
+    ticks = []
+    k = 1
+    for i in groups:
+        ticks.append(k)
+        k+=1
+
     bp = plt.boxplot(data, notch=0, vert=1, whis=1.5)
     plt.setp(bp['boxes'], color='black')
     plt.setp(bp['whiskers'], color='black')
     plt.setp(bp['fliers'], color='red', marker='+')
+    plt.ylabel('Gene Read Counts')
+    plt.xlabel(group_col_name)
+    plt.title(gene_name)
+    plt.xticks(ticks,groups, rotation = 'vertical')
     plt.savefig(out_file_name, bbox_inches='tight')
 
 def histogram(L, out_file_name):
