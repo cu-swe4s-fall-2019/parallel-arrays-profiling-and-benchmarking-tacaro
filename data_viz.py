@@ -24,6 +24,7 @@ def boxplot(L, out_file_name, groups, gene_name, group_col_name): # need gene_na
 
     ticks = []
     k = 1
+    
     for i in groups:
         ticks.append(k)
         k+=1
