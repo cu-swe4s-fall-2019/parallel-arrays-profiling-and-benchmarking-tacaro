@@ -9,8 +9,23 @@ matplotlib.use('Agg')
 
 
 def boxplot(L, out_file_name, groups, gene_name, group_col_name): # need gene_name and SMTS/SMTSD args
-    data = []
+    if path.exists(out_file_name):
+        raise OSError("File path already exists!")
+        sys.exit(1)
 
+    if L is None:
+        raise ValueError("Can't graph None!")
+
+    if L == []:
+        raise ValueError("Can't graph an empty list!")
+    try:
+        for line in L:
+            k = line[1]
+    except IndexError:
+        print("Can't plot 1D data!")
+
+
+    data = []
     for l in L:
         try:
             data.append(l)
@@ -24,7 +39,7 @@ def boxplot(L, out_file_name, groups, gene_name, group_col_name): # need gene_na
 
     ticks = []
     k = 1
-    
+
     for i in groups:
         ticks.append(k)
         k+=1
