@@ -4,47 +4,53 @@ import os
 import argparse
 import gzip
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pylab as plt
 from os import path
+matplotlib.use('Agg')
 
-data_file_name='GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_reads.acmg_59.\
-gct.gz'
-sample_info_file_name='GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt'
-group_col_name = 'SMTS' # stores tissue categories
+
+data_file_name = 'GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_\
+reads.acmg_59.gct.gz'
+sample_info_file_name = 'GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt'
+group_col_name = 'SMTS'  # stores tissue categories
 sample_id_col_name = 'SAMPID'
 gene_name = 'ACTA2'
 
 
-
-
 def linear_search(key, L):
-    for l  in range(len(L)): # for each element in the list
-        current =  L[l]
-        if key == current: # if the key is the current value
+    for l in range(len(L)):  # for each element in the list
+        current = L[l]
+        if key == current:  # if the key is the current value
             return l  # return the key
     return -1  # else, return a fake index to indicate failure
+
 
 def binary_search(key, D):
     low_bound = -1
     up_bound = len(D)
     while (up_bound - low_bound > 1):
-        middle = (up_bound + low_bound) // 2 # floor division
+        middle = (up_bound + low_bound) // 2  # floor division
 
-        if key == D[middle][0]: # if you find the key at the midpoint..
-            return D[middle][1] # return the key:value at that point
+        if key == D[middle][0]:  # if you find the key at the midpoint..
+            return D[middle][1]  # return the key:value at that point
 
-        if ( key < D[middle][0] ):  # if the key is less than the value at mid (alphabetically, numerically, etc.)
-            up_bound = middle # the key is below the current value, set the new high bracket to the current midpoint
+        if (key < D[middle][0]):  # if the key is less than the value at
+            # mid (alphabetically, numerically, etc.)
+            up_bound = middle
+            # the key is below the current value,
+            # set the new high bracket to the current midpoint
         else:
-            low_bound = middle # otherwise, the key is above the current value, set the new low bracket to current midpoint
+            low_bound = middle
+            # otherwise, the key is above the current value,
+            # set the new low bracket to current midpoint
 
     return -1  # else, return a fake index to indicate failure
 
 
 def main():
     parser = argparse.ArgumentParser(
-                description='Open file, find tissue gene counts for given gene',
+                description='Open file, find tissue gene counts for given \
+                gene',
                 prog='bay')
 
     parser.add_argument('-gr',  # input gene reads, from user
@@ -94,15 +100,15 @@ def main():
         raise OSError("File path already exists!")
         sys.exit(1)
 
-    if path.exists(data_file_name) == False:
+    if path.exists(data_file_name) is False:
         raise OSError("Data file not present in working directory!")
         sys.exit(1)
 
-    if path.exists(sample_info_file_name) == False:
+    if path.exists(sample_info_file_name) is False:
         raise OSError("Sample attributes not present in working directory!")
         sys.exit(1)
 
-########################## LINEAR SEARCH FUNCTIONALITY
+# LINEAR SEARCH FUNCTIONALITY
     '''
     samples = []
     sample_info_header = None
@@ -140,7 +146,9 @@ def main():
 
     group_counts = [ [] for i in range(len(groups)) ]
 
-    for l in gzip.open(data_file_name, 'rt'): # 'rt indicates that we are reading text, in comparison to 'rb' which is 'read binary'
+    for l in gzip.open(data_file_name, 'rt'):
+        # 'rt indicates that we are reading text, in comparison to
+        # 'rb' which is 'read binary'
         if version == None:
             version = l
             continue
@@ -168,18 +176,23 @@ def main():
 
     '''
 
-###################### BINARY SEARCH FUNCTIONALITY
+# BINARY SEARCH FUNCTIONALITY
     samples = []
     sample_info_header = None
     for l in open(sample_info_file_name):
-        if sample_info_header == None:
-            sample_info_header = l.rstrip().split('\t') # designate the header as the first line in the file, add the items to a list
+        if sample_info_header is None:
+            sample_info_header = l.rstrip().split('\t')
+            # designate the header as the first line in the file,
+            # add the items to a list
         else:
-            samples.append(l.rstrip().split('\t')) # then add all the samples to a list
+            samples.append(l.rstrip().split('\t'))
+            # then add all the samples to a list
 
     # we use linear search here because the header is NOT sorted!
-    group_col_idx = linear_search(group_col_name, sample_info_header) # find the group column name "SMTS" in the header list, note its index
-    sample_id_col_idx = linear_search(sample_id_col_name, sample_info_header) # find the index of the sample IDs within the header
+    group_col_idx = linear_search(group_col_name, sample_info_header)
+    # find the group column name "SMTS" in the header list, note its index
+    sample_id_col_idx = linear_search(sample_id_col_name, sample_info_header)
+    # find the index of the sample IDs within the header
 
     groups = []
     members = []
@@ -204,19 +217,18 @@ def main():
 
     gene_name_col = 1
 
-
-    group_counts = [ [] for i in range(len(groups)) ]
+    group_counts = [[] for i in range(len(groups))]
 
     for l in gzip.open(data_file_name, 'rt'):
-        if version == None:
+        if version is None:
             version = l
             continue
 
-        if dim == None:
+        if dim is None:
             dim = [int(x) for x in l.rstrip().split()]
             continue
 
-        if data_header == None:
+        if data_header is None:
             data_header = []
             i = 0
             for field in l.rstrip().split('\t'):
@@ -228,7 +240,7 @@ def main():
 
         A = l.rstrip().split('\t')
 
-        if A[dv_col] == gene_name:
+        if A[gene_name_col] == gene_name:
             for group_idx in range(len(groups)):
                 for member in members[group_idx]:
                     member_idx = binary_search(member, data_header)
@@ -239,5 +251,7 @@ def main():
     dz.boxplot(group_counts, out_file_name, groups, gene_name, group_col_name)
 
 ###########################
+
+
 if __name__ == '__main__':
     main()

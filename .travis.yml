@@ -10,5 +10,14 @@ before_install:
     - conda activate test
     - conda install -y pycodestyle
     - conda install --yes python=3.6
+    - conda install -y matplotlib
+    - conda install -y pillow
       
 script:
+    - python tests.py
+    - bash fxn_test.sh
+    - pycodestyle data_viz.py
+    - pycodestyle math_lib.py
+    - pycodestyle get_data.py
+    - pycodestyle plot_gtex.py
+    - pycodestyle tests.py
