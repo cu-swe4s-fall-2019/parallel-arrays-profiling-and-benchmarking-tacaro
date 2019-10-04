@@ -10,19 +10,13 @@ import plot_gtex as pg
 import unittest
 from PIL import Image
 
+
 class Test_dv(unittest.TestCase):
     """Tests dv.py functionality"""
 
     def setUp(self):
         already = Image.new('RGB', (1, 1))
         already.save('already.png', "PNG")
-        data2 = np.array([[1, 3], [5, 9]])
-        np.savetxt('data2.txt', data2, delimiter=',')
-
-    def teardown(self):
-        os.remove('novel.png')
-        os.remove('already.png')
-        os.remove('data2.txt')
 
     def test_boxplot_already_exists(self):
         with self.assertRaises(OSError):
@@ -105,6 +99,7 @@ class Test_ml(unittest.TestCase):
     def test_mean_rand_ints(self):
         self.assertAlmostEqual(ml.list_stdev(self.direct_compute_array),
                                self.direct_std_val)
+
 
 if __name__ == '__main__':
     unittest.main()

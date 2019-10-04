@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 matplotlib.use('Agg')
 
 
-def boxplot(L, out_file_name, groups, gene_name, group_col_name): # need gene_name and SMTS/SMTSD args
+def boxplot(L, out_file_name, groups, gene_name, group_col_name):
     if path.exists(out_file_name):
         raise OSError("File path already exists!")
         sys.exit(1)
@@ -24,12 +24,11 @@ def boxplot(L, out_file_name, groups, gene_name, group_col_name): # need gene_na
     except IndexError:
         print("Can't plot 1D data!")
 
-
     data = []
     for l in L:
         try:
             data.append(l)
-        except:
+        except ValueError:
             print("Something went wrong with a certain list.")
             continue
 
@@ -42,7 +41,7 @@ def boxplot(L, out_file_name, groups, gene_name, group_col_name): # need gene_na
 
     for i in groups:
         ticks.append(k)
-        k+=1
+        k += 1
 
     bp = plt.boxplot(data, notch=0, vert=1, whis=1.5)
     plt.setp(bp['boxes'], color='black')
@@ -51,8 +50,9 @@ def boxplot(L, out_file_name, groups, gene_name, group_col_name): # need gene_na
     plt.ylabel('Gene Read Counts')
     plt.xlabel(group_col_name)
     plt.title(gene_name)
-    plt.xticks(ticks,groups, rotation = 'vertical')
+    plt.xticks(ticks, groups, rotation='vertical')
     plt.savefig(out_file_name, bbox_inches='tight')
+
 
 def histogram(L, out_file_name):
     if path.exists(out_file_name):
