@@ -28,6 +28,21 @@ plot_gtex.py is executed from the command line:
 This is the only script the user should execute. The included modules are referenced
 by plot_gtex.py.
 
+# Benchmarking
+`cProfile` was used to determine which functions of plot_gtex.py were the most time intensive:
+The most time-consuming function call was the linear search:
+```
+ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    45904   19.509    0.000   19.514    0.000 plot_gtex.py:21(linear_search)
+    29268    0.197    0.000    0.197    0.000 {method 'split' of 'str' objects}
+```
+When changed to a binary search, the speed increased dramatically:
+```
+ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+29268    0.160    0.000    0.160    0.000 {method 'split' of 'str' objects}
+22951    0.104    0.000    0.106    0.000 plot_gtex.py:28(binary_search)
+```
+This is a speed increase by a factor of around 187X!
 
 # Installation
 1. pycodestyle is required to run the PEP8 adherence tests. This can be installed
