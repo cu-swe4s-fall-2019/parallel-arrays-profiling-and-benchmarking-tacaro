@@ -5,8 +5,8 @@ import argparse
 import gzip
 import matplotlib
 import matplotlib.pylab as plt
-import hash_tables_tacaro.hash_functions
-import hash_tables_tacaro.hash_tables
+# from hash_table_sub import hash_functions
+from hash_table_sub import hash_tables
 from os import path
 matplotlib.use('Agg')
 
