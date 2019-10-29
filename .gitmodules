@@ -1,3 +1,6 @@
 [submodule "hash-tables-tacaro"]
 	path = hash-tables-tacaro
 	url = https://github.com/cu-swe4s-fall-2019/hash-tables-tacaro.git
+[submodule "hash_table_sub"]
+	path = hash_table_sub
+	url = https://github.com/cu-swe4s-fall-2019/hash-tables-tacaro.git
