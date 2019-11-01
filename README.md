@@ -28,6 +28,8 @@ plot_gtex_hash.py requires the following arguments:
 
 plot_gtex.py is executed from the command line: `$ python plot_gtex.py --gene_reads GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_reads.acmg_59.gct.gz --sample_attributes GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt --gene ACTA2 --group_type SMTS --output_file ACTA2.png` This is the only script the user should execute. The included modules are referenced by plot_gtex.py.
 
+![Image](ACTA2.png)
+
 # Benchmarking
 
 `cProfile` was used to determine which functions of plot_gtex.py were the most time intensive: The most time-consuming function call was the linear search:
