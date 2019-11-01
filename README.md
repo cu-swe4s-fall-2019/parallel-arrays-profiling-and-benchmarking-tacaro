@@ -1,6 +1,6 @@
 # parallel-arrays-profiling-and-benchmarking
 
-Parallel Arrays, Profiling, and Benchmarking
+Parallel Arrays, Profiling, and Benchmarking Traivs CI: [![Build Status](https://travis-ci.com/cu-swe4s-fall-2019/parallel-arrays-profiling-and-benchmarking-tacaro.svg?branch=master)](https://travis-ci.com/cu-swe4s-fall-2019/parallel-arrays-profiling-and-benchmarking-tacaro)
 
 # Required Data Files:
 
