@@ -5,8 +5,8 @@ import argparse
 import gzip
 import matplotlib
 import matplotlib.pylab as plt
-# from hash_table_sub import hash_functions
-from hash_table_sub import hash_tables
+from hash_table_sub import hash_functions
+from hash_table_sub import hash_tables as ht
 from os import path
 matplotlib.use('Agg')
 
@@ -47,6 +47,34 @@ def binary_search(key, D):
             # set the new low bracket to current midpoint
 
     return -1  # else, return a fake index to indicate failure
+
+
+def hashing(group, file):
+    header = None
+    target = []
+    hash = ht.ChainedHash(90000, hash_functions.h_ascii)
+
+    for l in open(file):
+        sample_data = l.rstrip().split('\t')
+        if header is None:
+            header = sample_data
+            continue
+
+        sample_id = linear_search('SAMPID', header)
+        target_id = linear_search(group, header)
+
+        if target_id == -1:
+            return None, target
+
+        key = sample_data[target_id]
+        val = sample_data[sample_id]
+        query = hash.search(key)
+        if search is None:
+            hash.add(key, [val])
+            target.append(key)
+        else:
+            search.append(value)
+    return hash, target
 
 
 def main():
@@ -110,150 +138,53 @@ def main():
         raise OSError("Sample attributes not present in working directory!")
         sys.exit(1)
 
-# LINEAR SEARCH FUNCTIONALITY
-    '''
-    samples = []
-    sample_info_header = None
-    for l in open(sample_info_file_name):
-        if sample_info_header == None:
-            sample_info_header = l.rstrip().split('\t')
-        else:
-            samples.append(l.rstrip().split('\t'))
+    table, target = hashing(args.group_type, args.sample_attributes)
+    group.sort()
 
-    group_col_idx = linear_search(group_col_name, sample_info_header)
-    sample_id_col_idx = linear_search(sample_id_col_name, sample_info_header)
-
-    groups = []
-    members = []
-
-    for row_idx in range(len(samples)):
-        sample = samples[row_idx]
-        sample_name = sample[sample_id_col_idx]
-        curr_group = sample[group_col_idx]
-
-        curr_group_idx = linear_search(curr_group, groups)
-
-        if curr_group_idx == -1:
-            curr_group_idx = len(groups)
-            groups.append(curr_group)
-            members.append([])
-
-        members[curr_group_idx].append(sample_name)
-
-    version = None
-    dim = None
-    data_header = None
-
-    gene_name_col = 1
-
-    group_counts = [ [] for i in range(len(groups)) ]
-
-    for l in gzip.open(data_file_name, 'rt'):
-        # 'rt indicates that we are reading text, in comparison to
-        # 'rb' which is 'read binary'
-        if version == None:
-            version = l
+    v = None
+    d = None
+    count_header = None
+    for l in gzip.open(args.gene_reads, 'rt'):
+        if v is None:
+            v = l
+            continue
+        if d is None:
+            d = l
+            continue
+        if count_header is None:
+            count_header = l.rstrip().split('\t')
+            count_header_exp = []
+            for i in range(len(count_header)):
+                count_header_exp.append([count_header[i], i])
+            count_header_exp.sort()
             continue
 
-        if dim == None:
-            dim = [int(x) for x in l.rstrip().split()]
-            continue
+        counts = l.rstrip().split('\t')
+        d_id = linear_search('Description', count_header)
 
-        if data_header == None:
-            data_header = l.rstrip().split('\t')
-            continue
+    if d_id == -1:
+        print('Gene not found')
+        sys.exit(1)
 
-        A = l.rstrip().split('\t')
+    if counts[d_id] == args.gene:
+        printed = []
+        chained = hash_tables.ChainedHash(90000, hash_functions.h_ascii)
+        for i in range(d_id + 1, len(count_header)):
+            chained.add(count_header[i], int(counts[i]))
+        for attr in group:
+            count_list = []
+            locator = table.search(attr)
+            if locator is None:
+                continue
+            for sample_name in locator:
+                count = chained.search(sample_name)
+                if count is None:
+                    continue
+                count_list.append(count)
+            printed.append(count_list)
 
-        if A[gene_name_col] == gene_name: # linear search functionality
-            for group_idx in range(len(groups)):
-                for member in members[group_idx]:
-                    member_idx = linear_search(member, data_header)
-                    if member_idx != -1:
-                        group_counts[group_idx].append(int(A[member_idx]))
-            break
-
-    dz.boxplot(group_counts, out_file_name, groups, gene_name, group_col_name)
-
-
-    '''
-    '''
-# BINARY SEARCH FUNCTIONALITY
-    samples = []
-    sample_info_header = None
-    for l in open(sample_info_file_name):
-        if sample_info_header is None:
-            sample_info_header = l.rstrip().split('\t')
-            # designate the header as the first line in the file,
-            # add the items to a list
-        else:
-            samples.append(l.rstrip().split('\t'))
-            # then add all the samples to a list
-
-    # we use linear search here because the header is NOT sorted!
-    group_col_idx = linear_search(group_col_name, sample_info_header)
-    # find the group column name "SMTS" in the header list, note its index
-    sample_id_col_idx = linear_search(sample_id_col_name, sample_info_header)
-    # find the index of the sample IDs within the header
-
-    groups = []
-    members = []
-
-    for row_idx in range(len(samples)):
-        sample = samples[row_idx]
-        sample_name = sample[sample_id_col_idx]
-        curr_group = sample[group_col_idx]
-
-        curr_group_idx = linear_search(curr_group, groups)
-
-        if curr_group_idx == -1:
-            curr_group_idx = len(groups)
-            groups.append(curr_group)
-            members.append([])
-
-        members[curr_group_idx].append(sample_name)
-
-    version = None
-    dim = None
-    data_header = None
-
-    gene_name_col = 1
-
-    group_counts = [[] for i in range(len(groups))]
-
-    for l in gzip.open(data_file_name, 'rt'):
-        if version is None:
-            version = l
-            continue
-
-        if dim is None:
-            dim = [int(x) for x in l.rstrip().split()]
-            continue
-
-        if data_header is None:
-            data_header = []
-            i = 0
-            for field in l.rstrip().split('\t'):
-                data_header.append([field, i])
-                i += 1
-            data_header.sort(key=lambda tup: tup[0])
-
-            continue
-
-        A = l.rstrip().split('\t')
-
-        if A[gene_name_col] == gene_name:
-            for group_idx in range(len(groups)):
-                for member in members[group_idx]:
-                    member_idx = binary_search(member, data_header)
-                    if member_idx != -1:
-                        group_counts[group_idx].append(int(A[member_idx]))
-            break
-
-    dz.boxplot(group_counts, out_file_name, groups, gene_name, group_col_name)
-    '''
-    # HASH TABLE FUNCTIONALITY
-
+        dz.boxplot(printed, group, args.gene, args.group_type, "Gene Read\
+         Counts", args.output_file)
 
 ###########################
 
